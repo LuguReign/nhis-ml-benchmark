@@ -1,0 +1,237 @@
+\documentclass[aspectratio=169]{beamer}
+
+% --- Safe theme fallback: use metropolis if available, else default beamer ---
+\IfFileExists{beamerthememetropolis.sty}{\usetheme{metropolis}}{\usetheme{default}}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\pgfplotsset{compat=1.18}
+\sisetup{round-mode=places,round-precision=3,detect-all}
+
+% --------- Paths to artifacts (adjust if needed) ----------
+\def\ART{artifacts} % directory where CSVs live
+\def\IMP{\ART/grouped_importance_l1_adults24.csv}
+
+% --------- Title -----------
+\title{NHIS \textrightarrow{} ML: Self-Rated Health (SRH) Prediction}
+\subtitle{Adults23 \textrightarrow{} Adults24 generalization; grouped permutation importance}
+\author{NHIS ML Benchmark (Adults23 train, Adults24 test)}
+\date{\today}
+
+% ======= helper: read & prepare importance table =======
+% Expect columns: nhis_var, delta_auc, delta_auc_std, pretty_label
+\IfFileExists{\IMP}{}{\typeout{*** MISSING FILE: \IMP ***}}
+\pgfplotstableread[col sep=comma]{\IMP}\importanceRaw
+\pgfplotstablecopy{\importanceRaw}\importanceSorted
+
+% Count rows
+\pgfplotstablegetrowsof{\importanceSorted}
+\pgfmathsetmacro{\NROWS}{\pgfplotsretval}
+
+% Limit to Top-15 (or all if fewer)
+\pgfmathtruncatemacro{\NTOP}{ min(int(\NROWS),15) }
+
+% Build yticklabels macro for the first \NTOP rows (pretty_label fallback to nhis_var)
+\newcommand{\MakeYTicks}{%
+  \pgfplotsinvokeforeach{0,...,\numexpr\NTOP-1\relax}{%
+    \pgfplotstablegetelem{##1}{pretty_label}\of{\importanceSorted}%
+    \edef\_lbl{\pgfplotsretval}%
+    \ifx\_lbl\empty
+      \pgfplotstablegetelem{##1}{nhis_var}\of{\importanceSorted}%
+      \edef\_lbl{\pgfplotsretval}%
+    \fi
+    \edef\temp{ \_lbl, }%
+    \temp
+  }%
+}
+
+% Build (x=delta_auc, y=index) coordinate list for first \NTOP rows
+\newcommand{\PlotCoords}{%
+  \pgfplotsinvokeforeach{0,...,\numexpr\NTOP-1\relax}{%
+    \pgfplotstablegetelem{##1}{delta_auc}\of{\importanceSorted}%
+    \edef\_x{\pgfplotsretval}%
+    (\_x,##1)
+  }%
+}
+
+\begin{document}
+
+\maketitle
+
+% ----------------------------------------------------------
+\begin{frame}{Goal and Data}
+\textbf{Project goal.} Make NHIS (complex survey) \emph{ML-friendly}: a clear, reproducible prediction task and baseline benchmarks.
+
+\medskip
+\textbf{Outcome.} Self-rated health (PHSTAT\_A), binarized: \texttt{Fair/Poor = 1} vs \texttt{Good+ = 0}.
+
+\medskip
+\textbf{Setup.}
+\begin{itemize}
+  \item Train: \textbf{Adults23}; Test: \textbf{Adults24}
+  \item Weights: NHIS weight \texttt{WTFA\_A}, normalized
+  \item Predictors: SES, education, employment/benefits, social, disability/functioning, mental health, conditions, chronic, access to care
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Modeling Summary (lean baseline)}
+\begin{itemize}
+  \item End-to-end pipelines in scikit-learn:
+  \begin{itemize}
+    \item \textbf{Preprocessing}: missing handling; 1/2 $\rightarrow$ 1/0 for binary; ordinal cleanup; OHE for categoricals
+    \item \textbf{Models}: Logistic (L1), Random Forest; calibrated versions available
+  \end{itemize}
+  \item Thresholds tuned on Adults23 (OOF) for \textbf{weighted F1}; evaluate on Adults24.
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Adults24: Test Metrics (reported)}
+\centering
+\small
+\begin{tabular}{l c c c c c}
+\toprule
+Model (thr) & AUC & W. Acc & Bal. Acc & W. F1 & Avg. Prec \\
+\midrule
+RF (0.55)   & 0.8574 & 0.8512 & 0.7664 & 0.5507 & 0.5581 \\
+L1 (0.65)   & 0.8562 & 0.8515 & 0.7658 & 0.5537 & 0.5626 \\
+RF-Cal (0.25) & 0.8582 & 0.8415 & 0.7719 & 0.5475 & 0.5579 \\
+L1-Cal (0.30) & 0.8561 & 0.8633 & 0.7566 & 0.5555 & 0.5624 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textit{L1 baseline AUC on Adults24: 0.8562; thresholds selected via Adults23 OOF.}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Adults24: Confusion Matrices (at tuned thresholds)}
+\small
+\begin{columns}[t]
+\column{0.5\textwidth}
+\textbf{L1 (thr=0.65)}\par
+\begin{tabular}{r r r}
+\toprule
+& \multicolumn{2}{c}{Pred} \\
+& 0 & 1 \\
+\midrule
+True 0 & 23602 & 3672 \\
+True 1 & 1787 & 3568 \\
+\bottomrule
+\end{tabular}
+
+\column{0.5\textwidth}
+\textbf{RF (thr=0.55)}\par
+\begin{tabular}{r r r}
+\toprule
+& \multicolumn{2}{c}{Pred} \\
+& 0 & 1 \\
+\midrule
+True 0 & 23535 & 3739 \\
+True 1 & 1768 & 3587 \\
+\bottomrule
+\end{tabular}
+\end{columns}
+
+\medskip
+\footnotesize
+Weighted-F1 tuning favored recall on Fair/Poor; balanced accuracy improved with modest precision trade-off.
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Top Drivers on Adults24 (Grouped Permutation Importance)}
+\small
+We compute \textbf{grouped permutation importance} at the \emph{original NHIS variable level}: shuffle one raw column at a time, run the full pipeline, and measure the drop in \textbf{weighted AUC}.
+
+\medskip
+\textbf{This deck reads from} \texttt{\IMP}. Ensure the CSV exists.
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Top-15 drivers (Adults24, L1) — Bar chart}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    xbar,
+    height=0.62\paperheight,
+    width=0.95\paperwidth,
+    xmin=0,
+    xlabel={$\Delta$ AUC when shuffled},
+    ytick=data,
+    yticklabels={\MakeYTicks},
+    yticklabel style={/pgf/number format/fixed, font=\footnotesize, align=right},
+    xticklabel style={/pgf/number format/fixed, font=\footnotesize},
+    bar width=5pt,
+    enlargelimits=0.02,
+    axis line style={draw=none},
+    tick style={draw=none},
+    xmajorgrids=true,
+    grid style={gray!20},
+]
+\addplot+[draw=none, fill=blue!65] coordinates { \PlotCoords };
+\end{axis}
+\end{tikzpicture}
+
+\footnotesize
+Largest drops: disability/functioning, cardiometabolic, and poverty ratio.
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Top-15 drivers (Adults24, L1) — Table}
+\centering
+\scriptsize
+\pgfplotstabletypeset[
+    columns={pretty_label,nhis_var,delta_auc,delta_auc_std},
+    columns/pretty_label/.style={string type,column name=Label},
+    columns/nhis_var/.style={string type,column name=NHIS code},
+    columns/delta_auc/.style={fixed,precision=4,column name=$\Delta$AUC},
+    columns/delta_auc_std/.style={fixed,precision=4,column name=SD},
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule},
+    rows={0,...,\numexpr\NTOP-1\relax}
+]{\importanceSorted}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Interpretation (Adults24, L1)}
+\small
+\textbf{Takeaways.}
+\begin{itemize}
+  \item \textbf{Disability \& functioning} are dominant signals for Fair/Poor SRH.
+  \item \textbf{Cardiometabolic disease} contributes next.
+  \item \textbf{Socioeconomics} (poverty ratio, food security) and \textbf{education} add smaller, consistent signal.
+\end{itemize}
+
+\textbf{Caveats.}
+\begin{itemize}
+  \item Permutation importance shares credit across correlated variables; interpret clusters, not single causes.
+  \item Predictive, not causal; weights respect survey size, not full design-based variance.
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Reproducibility}
+\small
+\begin{itemize}
+  \item Code: Python + PyCharm; parquet inputs: \texttt{data/Adults23\_corefeatures.parquet}, \texttt{data/Adults24\_corefeatures.parquet}
+  \item Artifacts: pipelines (\texttt{*.joblib}), metrics, predictions, subgroup metrics, importance CSVs
+  \item This PDF reads CSVs at compile time; ensure \texttt{\IMP} exists (Top-15 frames)
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}[standout]
+Questions?
+\end{frame}
+
+\end{document}

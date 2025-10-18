@@ -1,0 +1,255 @@
+% file: presentation/nhis_srh_presentation.tex
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\usetheme{metropolis} % if not installed, comment out and use default
+
+\pgfplotsset{compat=1.18}
+\sisetup{round-mode=places,round-precision=3,detect-all}
+
+% --------- Paths to artifacts (adjust if needed) ----------
+\def\ART{artifacts} % directory where CSVs live
+\def\IMP{\ART/grouped_importance_l1_adults24.csv}
+
+% --------- Title -----------
+\title{NHIS → ML: Self-Rated Health (SRH) Prediction}
+\subtitle{Adults23 → Adults24 generalization; grouped permutation importance}
+\author{NHIS ML Benchmark (Adults23 train, Adults24 test)}
+\date{\today}
+
+% ======= helper: read & prepare importance table =======
+% Expect columns: nhis_var, delta_auc, delta_auc_std, pretty_label
+\pgfplotstableread[col sep=comma]{\IMP}\importanceRaw
+% We assume your CSV is already sorted (desc by delta_auc) by our script.
+% If unsure, you can uncomment the next line to sort in TeX by delta_auc descending:
+% \pgfplotstablesort[sort key=delta_auc, sort cmp=float >]{\importanceSorted}{\importanceRaw}
+\pgfplotstablecopy{\importanceRaw}\importanceSorted
+
+% Count rows
+\pgfplotstablegetrowsof{\importanceSorted}
+\pgfmathsetmacro{\NROWS}{\pgfplotsretval}
+
+% Limit to Top-15 (or all if fewer)
+\pgfmathtruncatemacro{\NTOP}{ min(int(\NROWS),15) }
+
+% Build yticklabels macro for the first \NTOP rows (pretty_label fallback to nhis_var)
+\newcommand{\MakeYTicks}{%
+  \pgfplotsinvokeforeach{0,...,\numexpr\NTOP-1\relax}{%
+    \pgfplotstablegetelem{##1}{pretty_label}\of{\importanceSorted}%
+    \edef\_lbl{\pgfplotsretval}%
+    \ifx\_lbl\empty
+      \pgfplotstablegetelem{##1}{nhis_var}\of{\importanceSorted}%
+      \edef\_lbl{\pgfplotsretval}%
+    \fi
+    \edef\temp{ \_lbl, }%
+    \temp
+  }%
+}
+
+% Build (x=delta_auc, y=index) coordinate list for first \NTOP rows
+\newcommand{\PlotCoords}{%
+  \pgfplotsinvokeforeach{0,...,\numexpr\NTOP-1\relax}{%
+    \pgfplotstablegetelem{##1}{delta_auc}\of{\importanceSorted}%
+    \edef\_x{\pgfplotsretval}%
+    (\_x,##1)
+  }%
+}
+
+% ======= Document =======
+\begin{document}
+
+\maketitle
+
+% ----------------------------------------------------------
+\begin{frame}{Goal and Data}
+\textbf{Project goal.} Make NHIS (complex survey) \emph{ML-friendly}: a clear, reproducible prediction task and baseline benchmarks.
+
+\medskip
+\textbf{Outcome.} Self-rated health (PHSTAT\_A), binarized: \texttt{Fair/Poor = 1} vs \texttt{Good+ = 0}.
+
+\medskip
+\textbf{Setup.}
+\begin{itemize}
+  \item Train: \textbf{Adults23} (external generalization emphasis)
+  \item Test: \textbf{Adults24} (out-of-sample year)
+  \item Weights: NHIS weight \texttt{WTFA\_A}, normalized
+  \item Predictors: SES, education, employment/benefits, social, disability/functioning, mental health, conditions, chronic, access to care
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Modeling Summary (lean baseline)}
+\begin{itemize}
+  \item End-to-end pipelines in scikit-learn:
+  \begin{itemize}
+    \item \textbf{Preprocessing}: missing handling; 1/2 $\rightarrow$ 1/0 for binary; ordinal cleanup; OHE for categoricals
+    \item \textbf{Models}: Logistic (L1), Random Forest; calibrated versions available
+  \end{itemize}
+  \item Thresholds tuned on Adults23 using out-of-fold predictions to optimize \textbf{weighted F1}
+  \item Evaluation on Adults24: \textbf{AUC, weighted accuracy, balanced accuracy, weighted F1, AP}
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Adults24: Test Metrics (your reported results)}
+\centering
+\small
+\begin{tabular}{l c c c c c}
+\toprule
+Model (thr) & AUC & W. Acc & Bal. Acc & W. F1 & Avg. Prec \\
+\midrule
+RF (0.55)   & 0.8574 & 0.8512 & 0.7664 & 0.5507 & 0.5581 \\
+L1 (0.65)   & 0.8562 & 0.8515 & 0.7658 & 0.5537 & 0.5626 \\
+RF-Cal (0.25) & 0.8582 & 0.8415 & 0.7719 & 0.5475 & 0.5579 \\
+L1-Cal (0.30) & 0.8561 & 0.8633 & 0.7566 & 0.5555 & 0.5624 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textit{Note: L1 baseline AUC on Adults24 reported as 0.8562; thresholds selected via Adults23 OOF.}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Adults24: Confusion Matrices (at tuned thresholds)}
+\small
+\begin{columns}[t]
+\column{0.5\textwidth}
+\textbf{L1 (thr=0.65)}\par
+\begin{tabular}{r r r}
+\toprule
+& \multicolumn{2}{c}{Pred} \\
+& 0 & 1 \\
+\midrule
+True 0 & 23602 & 3672 \\
+True 1 & 1787 & 3568 \\
+\bottomrule
+\end{tabular}
+
+\column{0.5\textwidth}
+\textbf{RF (thr=0.55)}\par
+\begin{tabular}{r r r}
+\toprule
+& \multicolumn{2}{c}{Pred} \\
+& 0 & 1 \\
+\midrule
+True 0 & 23535 & 3739 \\
+True 1 & 1768 & 3587 \\
+\bottomrule
+\end{tabular}
+\end{columns}
+
+\medskip
+\footnotesize
+F1 favored recall on the minority class (Fair/Poor), improving balanced accuracy with modest precision trade-off.
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Top Drivers on Adults24 (Grouped Permutation Importance)}
+\small
+We compute \textbf{grouped permutation importance} at the \emph{original NHIS variable level}: shuffle one raw column at a time, run the full pipeline, and measure the drop in \textbf{weighted AUC}.
+
+\medskip
+\textbf{This slide reads directly from} \texttt{\IMP}. If the file is missing, place it at \texttt{\IMP}.
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Top-15 drivers (Adults24, L1) — Bar chart}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    xbar,
+    height=0.62\paperheight,
+    width=0.95\paperwidth,
+    xmin=0,
+    xlabel={$\Delta$ AUC when shuffled},
+    ytick=data,
+    yticklabels={\MakeYTicks},
+    yticklabel style={/pgf/number format/fixed, font=\footnotesize, align=right},
+    xticklabel style={/pgf/number format/fixed, font=\footnotesize},
+    bar width=5pt,
+    enlargelimits=0.02,
+    axis line style={draw=none},
+    tick style={draw=none},
+    xmajorgrids=true,
+    grid style={gray!20},
+]
+\addplot+[draw=none, fill=blue!65] coordinates { \PlotCoords };
+\end{axis}
+\end{tikzpicture}
+
+\footnotesize
+Largest drops typically appear for disability/functioning, cardiometabolic conditions, and poverty ratio.
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Top-15 drivers (Adults24, L1) — Table}
+\centering
+\scriptsize
+\pgfplotstabletypeset[
+    columns={pretty_label,nhis_var,delta_auc,delta_auc_std},
+    columns/pretty_label/.style={string type,column name=Label},
+    columns/nhis_var/.style={string type,column name=NHIS code},
+    columns/delta_auc/.style={fixed,precision=4,column name=$\Delta$AUC},
+    columns/delta_auc_std/.style={fixed,precision=4,column name=SD},
+    every head row/.style={before row=\toprule,after row=\midrule},
+    every last row/.style={after row=\bottomrule},
+    % print only first \NTOP rows (assumes CSV sorted desc)
+    rows={0,...,\numexpr\NTOP-1\relax}
+]{\importanceSorted}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Interpretation (Adults24, L1)}
+\small
+\textbf{Takeaways.}
+\begin{itemize}
+  \item \textbf{Disability \& functioning} (DISAB3\_A, DIFF\_A) are the dominant signals for Fair/Poor SRH.
+  \item \textbf{Cardiometabolic disease} (HYPEV\_A, DIBEV\_A, CHD/Stroke) contributes next.
+  \item \textbf{Socioeconomics} (POVRATTC\_A, food security) and \textbf{education} add consistent but smaller signal.
+\end{itemize}
+
+\textbf{Caveats.}
+\begin{itemize}
+  \item Permutation importance can split importance among correlated variables; treat clusters as the driver.
+  \item Results are predictive, not causal; complex survey design is respected via weights, not full design-based variance.
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Methodological Notes}
+\small
+\begin{itemize}
+  \item Outcome: ordinal SRH (1--5) binarized to \texttt{Fair/Poor} vs \texttt{Good+} for classification; ordinal modeling is a planned extension.
+  \item Adults23 $\rightarrow$ Adults24 ensures temporal generalization.
+  \item Weights \texttt{WTFA\_A} are normalized and passed to fitting and scoring.
+  \item Thresholds tuned on Adults23 (OOF) to optimize \textbf{weighted F1}; metrics reported on Adults24 at those thresholds.
+  \item For interpretability in this deck we use \textbf{grouped permutation importance on raw variables} to avoid OHE label plumbing.
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Reproducibility}
+\small
+\begin{itemize}
+  \item Code: Python + PyCharm; parquet inputs \texttt{data/Adults23\_corefeatures.parquet}, \texttt{data/Adults24\_corefeatures.parquet}
+  \item Artifacts saved to \texttt{artifacts/}: pipelines (\texttt{*.joblib}), test metrics, predictions, subgroup metrics, and importance CSVs
+  \item This PDF reads CSVs at compile time; ensure \texttt{\IMP} exists (Top-15 slide/table)
+\end{itemize}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}[standout]
+Questions?
+\end{frame}
+
+\end{document}
