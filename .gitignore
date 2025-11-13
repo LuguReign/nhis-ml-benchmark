@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Virtual envs
+.venv/
+.venv-test/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Local data & trained models
+data/
+artifacts/
+
+# IDE / OS
+.DS_Store
+.vscode/
+.idea/
