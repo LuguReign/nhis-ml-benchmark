@@ -1,24 +1,18 @@
-# Python
+# Python cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-*.log
 
-# Virtual envs
+# Local env & build
 .venv/
-.venv-test/
-
-# Build artifacts
-build/
 dist/
+build/
 *.egg-info/
 
-# Local data & trained models
+# Data & models (generated)
 data/
 artifacts/
-
-# IDE / OS
-.DS_Store
-.vscode/
-.idea/
+src/artifacts/
+*.joblib
+*.parquet
+*.npz
+*.zip
