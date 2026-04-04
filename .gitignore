@@ -3,3 +3,8 @@ dist/
 paper_outputs/
 runs/
 scripts/
+
+.DS_Store
+__pycache__/
+*.pyc
+*.egg-info/

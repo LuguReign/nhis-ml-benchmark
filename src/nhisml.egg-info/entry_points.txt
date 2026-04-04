@@ -1,2 +1,0 @@
-[console_scripts]
-nhisml = nhisml.cli:main
