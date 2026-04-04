@@ -1,0 +1,49 @@
+[project]
+name = "nhisml"
+version = "0.4.0"
+description = "Survey-aware ML starter kit for NHIS Adults (2023/2024): fetch, build core data, train baselines, export reproducible outputs."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "JPSM et al", email = "lreign1@umd.edu" }]
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "pyarrow>=14",
+  "scikit-learn>=1.4",
+  "joblib>=1.3",
+  "requests>=2.31",
+  "tqdm>=4.66"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6"
+]
+viz = [
+  "matplotlib>=3.8"
+]
+duckdb = [
+  "duckdb>=1.0"
+]
+
+[project.scripts]
+nhisml = "nhisml.cli:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
