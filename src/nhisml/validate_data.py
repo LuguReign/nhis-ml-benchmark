@@ -363,7 +363,6 @@ def validate_core_year(
 # ---------------------------------------------------------------------------
 
 def cli(argv: Optional[list[str]] = None) -> None:
-    from typing import Optional as Opt  # avoid redefinition at module level
     p = argparse.ArgumentParser(
         "nhisml validate-data",
         description=(

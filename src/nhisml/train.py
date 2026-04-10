@@ -1,17 +1,11 @@
 from __future__ import annotations
 
-import warnings
-warnings.filterwarnings(
-    "ignore",
-    category=RuntimeWarning,
-    module="sklearn.utils.extmath",
-)
-
 import argparse
 import json
 import os
 import platform
 import sys
+import warnings
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import Any, Dict, Optional, Tuple
@@ -22,6 +16,14 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
+
+# Suppress numeric warnings from sklearn's internal OVR decision function
+# normalization — harmless for our weighted logistic regression use case.
+warnings.filterwarnings(
+    "ignore",
+    category=RuntimeWarning,
+    module="sklearn.utils.extmath",
+)
 
 from .featuresets import get_featureset
 from .preprocess import build_preprocessor, normalize_weights
