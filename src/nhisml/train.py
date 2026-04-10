@@ -17,6 +17,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
+from .featuresets import get_featureset
+from .preprocess import build_preprocessor, normalize_weights
+from .tasks import make_task
+from .utils import fit_calibrated_from_oof, weighted_threshold_via_oof
+
 # Suppress numeric warnings from sklearn's internal OVR decision function
 # normalization — harmless for our weighted logistic regression use case.
 warnings.filterwarnings(
@@ -24,11 +29,6 @@ warnings.filterwarnings(
     category=RuntimeWarning,
     module="sklearn.utils.extmath",
 )
-
-from .featuresets import get_featureset
-from .preprocess import build_preprocessor, normalize_weights
-from .tasks import make_task
-from .utils import fit_calibrated_from_oof, weighted_threshold_via_oof
 
 
 @dataclass

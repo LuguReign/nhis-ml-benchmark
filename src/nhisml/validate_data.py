@@ -202,7 +202,7 @@ def validate_core_year(
     add(_check(
         "Row count",
         len(df) == ref.n_rows,
-        f"Row count mismatch — wrong year's data may have been built here.",
+        "Row count mismatch — wrong year's data may have been built here.",
         expected=str(ref.n_rows),
         actual=str(len(df)),
     ))
@@ -210,7 +210,7 @@ def validate_core_year(
     add(_check(
         "Minimum column count",
         df.shape[1] >= ref.n_cols_min,
-        f"Fewer columns than expected; featureset or task columns may be missing.",
+        "Fewer columns than expected; featureset or task columns may be missing.",
         expected=f"≥{ref.n_cols_min}",
         actual=str(df.shape[1]),
     ))
@@ -350,7 +350,7 @@ def validate_core_year(
         add(_check(
             "Age range plausible (18–85 top-coded, excl. missing codes 97–99)",
             bool((ages >= 18).all() and (ages <= 85).all()),
-            f"Ages outside [18, 85] found after removing missing codes.",
+            "Ages outside [18, 85] found after removing missing codes.",
             expected="18–85",
             actual=f"min={ages.min():.0f} max={ages.max():.0f}",
         ))

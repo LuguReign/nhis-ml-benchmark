@@ -176,7 +176,9 @@ class TestPrepareFrame:
         assert "RARE" not in levels
 
     def test_unseen_category_becomes_rare(self):
-        df_train = pd.DataFrame({"CAT_A": ["A"] * 100 + ["B"] * 100})
+        # Include a rare training category so __RARE__ is added to the level set.
+        # Without it, unseen values are left as-is (no __RARE__ bucket exists).
+        df_train = pd.DataFrame({"CAT_A": ["A"] * 100 + ["B"] * 100 + ["RARE_TRAIN"] * 2})
         pf = PrepareFrame(binary_cols=[], ordinal_cols=[], categorical_cols=["CAT_A"],
                           rare_min_count=5)
         pf.fit(df_train)

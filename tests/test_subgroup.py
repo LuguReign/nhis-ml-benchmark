@@ -88,7 +88,9 @@ class TestRecodeAgeBand:
 
 class TestRecodeEduc4:
     def test_level_mapping(self):
-        df = pd.DataFrame({"EDUCP_A": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]})
+        # Avoid NHIS missing codes 7, 8, 9 (stripped to NaN by _clean_nhis_numeric).
+        # Mapping: 0-2 → <HS, 3-4 → HS/GED, 5-6 → Some college/AA, 10 → BA+
+        df = pd.DataFrame({"EDUCP_A": [0, 1, 2, 3, 4, 5, 6, 6, 10, 10, 10]})
         out = _recode_educ_4(df)
         assert out.iloc[0] == "<HS"
         assert out.iloc[2] == "<HS"

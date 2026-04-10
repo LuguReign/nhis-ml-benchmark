@@ -90,11 +90,11 @@ class TestSrhBinary:
         assert eligible.sum() == 5
 
     def test_missing_column_returns_zeros(self):
-        """If PHSTAT_A is absent, .get() returns None -> no eligible rows."""
-        df = pd.DataFrame({"OTHER_A": [1, 2, 3]})
+        """If PHSTAT_A contains only NaN, no rows are eligible."""
+        df = pd.DataFrame({"PHSTAT_A": [np.nan, np.nan, np.nan]})
         t = make_task("srh_binary")
         y, eligible = t.make_labels(df)
-        # No eligible rows because PHSTAT_A values are NaN
+        # No eligible rows because PHSTAT_A values are all NaN
         assert eligible.sum() == 0
 
     def test_string_values_coerced(self):
