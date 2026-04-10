@@ -9,6 +9,7 @@ from . import build_core as build_core_mod
 from . import train as train_mod
 from . import evaluate as evaluate_mod
 from . import subgroup as subgroup_mod
+from . import validate_data as validate_data_mod
 from .featuresets import list_featuresets, get_featureset
 from .tasks import list_tasks, make_task
 
@@ -104,6 +105,19 @@ def main(argv: Optional[list[str]] = None) -> None:
     pdfs = sub.add_parser("describe-featureset", help="Describe a feature set (counts and column lists)")
     pdfs.add_argument("featureset", help="Feature set name")
     pdfs.set_defaults(func=_cmd_describe_featureset)
+
+    # validate-data
+    pv = sub.add_parser(
+        "validate-data",
+        help="Validate processed core parquets against known NHIS Adults reference statistics",
+    )
+    pv.add_argument("--year", type=int, action="append", required=True,
+                    help="Year(s) to validate, e.g. --year 2023 --year 2024")
+    pv.add_argument("--data-dir", default="data",
+                    help="Directory containing core_YYYY.parquet files (default: data/)")
+    pv.add_argument("--verbose", "-v", action="store_true",
+                    help="Show expected/actual values for passing checks too")
+    pv.set_defaults(func=lambda a: validate_data_mod.cli(_rebuild_argv("validate-data", a)))
 
     args = p.parse_args(argv)
     args.func(args)

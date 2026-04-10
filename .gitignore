@@ -5,6 +5,8 @@ runs/
 scripts/
 
 .DS_Store
+.venv/
+.idea/
 __pycache__/
 *.pyc
 *.egg-info/
