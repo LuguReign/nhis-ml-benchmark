@@ -1,6 +1,6 @@
 [project]
 name = "nhisml"
-version = "0.5.0"
+version = "0.5.1"
 description = "Survey-aware ML starter kit for NHIS Adults (2023/2024): fetch, build core data, train baselines, export reproducible outputs."
 readme = "README.md"
 requires-python = ">=3.9"
