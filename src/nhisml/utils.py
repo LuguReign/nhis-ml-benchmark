@@ -11,6 +11,20 @@ from sklearn.metrics import average_precision_score, f1_score, roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline
 
+# sklearn ≥ 1.6 removed cv="prefit"; use FrozenEstimator instead.
+try:
+    from sklearn.frozen import FrozenEstimator as _FrozenEstimator
+    _HAVE_FROZEN = True
+except ImportError:
+    _HAVE_FROZEN = False
+
+
+def _prefit_calibrator(estimator, method: str) -> CalibratedClassifierCV:
+    """Return a CalibratedClassifierCV wrapping an already-fitted estimator."""
+    if _HAVE_FROZEN:
+        return CalibratedClassifierCV(estimator=_FrozenEstimator(estimator), method=method)
+    return CalibratedClassifierCV(estimator=estimator, cv="prefit", method=method)
+
 
 def infer_estimator_step_name(model) -> Optional[str]:
     """
@@ -149,7 +163,7 @@ def fit_calibrated_from_oof(
         base = clone(model)
         base.fit(Xtr, ytr, **_route_fit_weights_kwargs(base, wtr, step_name=step_name))
 
-        cal = CalibratedClassifierCV(estimator=base, cv="prefit", method=method)
+        cal = _prefit_calibrator(base, method)
         _calibrator_fit(cal, Xtr, ytr, wtr)
         oof_cal[va_idx] = cal.predict_proba(Xva)[:, 1]
 
@@ -165,7 +179,7 @@ def fit_calibrated_from_oof(
     base_full = clone(model)
     base_full.fit(X, y, **_route_fit_weights_kwargs(base_full, w, step_name=step_name))
 
-    cal_full = CalibratedClassifierCV(estimator=base_full, cv="prefit", method=method)
+    cal_full = _prefit_calibrator(base_full, method)
     _calibrator_fit(cal_full, X, y, w)
 
     return cal_full, float(thr), perf, oof_cal

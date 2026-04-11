@@ -131,7 +131,8 @@ class TestBasicNormalize:
     def test_original_df_not_mutated(self):
         df = pd.DataFrame({"WTFA_A": ["1000"]})
         _basic_normalize(df, ["WTFA_A"])
-        assert df["WTFA_A"].dtype == object
+        # Column must remain non-numeric (string) — dtype differs across pandas versions
+        assert not pd.api.types.is_numeric_dtype(df["WTFA_A"])
 
 
 # ---------------------------------------------------------------------------

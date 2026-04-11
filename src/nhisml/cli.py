@@ -129,7 +129,11 @@ def _cmd_list_tasks(args: argparse.Namespace) -> None:
 
 
 def _cmd_describe_task(args: argparse.Namespace) -> None:
-    t = make_task(args.task)
+    try:
+        t = make_task(args.task)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        raise SystemExit(1)
     print(f"name: {t.name}")
     print(f"type: {t.problem_type}")
     print(f"description: {t.description}")
@@ -142,7 +146,11 @@ def _cmd_list_featuresets(args: argparse.Namespace) -> None:
 
 
 def _cmd_describe_featureset(args: argparse.Namespace) -> None:
-    fs = get_featureset(args.featureset)
+    try:
+        fs = get_featureset(args.featureset)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        raise SystemExit(1)
     print(f"name: {fs.name}")
     if hasattr(fs, "description"):
         print(f"description: {getattr(fs, 'description')}")
