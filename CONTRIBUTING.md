@@ -13,7 +13,7 @@ Please open a GitHub issue and include:
 ## Development Setup
 
 ```bash
-git clone https://github.com/JPSM-et-al/nhisml.git
+git clone https://github.com/LuguReign/nhis-ml-benchmark.git
 cd nhisml
 pip install -e ".[dev]"
 ```
