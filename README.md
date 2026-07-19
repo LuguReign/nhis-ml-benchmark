@@ -1,6 +1,6 @@
 # nhisml
 
-[![Tests](https://github.com/JPSM-et-al/nhisml/actions/workflows/tests.yml/badge.svg)](https://github.com/JPSM-et-al/nhisml/actions/workflows/tests.yml)
+[![Tests](https://github.com/LuguReign/nhis-ml-benchmark/actions/workflows/tests.yml/badge.svg)](https://github.com/LuguReign/nhis-ml-benchmark/actions/workflows/tests.yml)
 [![PyPI version](https://badge.fury.io/py/nhisml.svg)](https://badge.fury.io/py/nhisml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
@@ -37,8 +37,8 @@ pip install "nhisml[viz]"
 For development and testing:
 
 ```bash
-git clone https://github.com/JPSM-et-al/nhisml.git
-cd nhisml
+git clone https://github.com/LuguReign/nhis-ml-benchmark.git
+cd nhis-ml-benchmark
 pip install -e ".[dev]"
 ```
 

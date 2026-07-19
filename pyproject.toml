@@ -5,7 +5,13 @@ description = "Survey-aware ML starter kit for NHIS Adults (2023/2024): fetch, b
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "JPSM et al", email = "lreign1@umd.edu" }]
+authors = [
+  { name = "Nicholas Lugu Reign", email = "lreign1@umd.edu" },
+  { name = "Catherine Lamoreaux" },
+  { name = "Jan Simson" },
+  { name = "Christoph Kern" },
+  { name = "Frauke Kreuter" }
+]
 dependencies = [
   "numpy>=1.26",
   "pandas>=2.1",
