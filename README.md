@@ -99,7 +99,7 @@ nhisml describe-task srh_binary
 
 ## Available Feature Sets
 
-The `core` feature set includes 66 NHIS Adults predictors spanning:
+The `core` feature set includes 69 NHIS Adults predictors spanning:
 
 - **Health conditions** (hypertension, diabetes, cardiovascular disease, respiratory, etc.)
 - **Mental health** (depression, anxiety, psychological distress indices)
