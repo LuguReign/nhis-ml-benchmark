@@ -184,7 +184,17 @@ The test suite covers task logic, preprocessing correctness, metric computation,
 Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on filing issues, submitting pull requests, adding new prediction tasks, and extending the feature set registry.
 
 ## Citation
-   
+
+
+```bibtex
+@software{nhisml,
+  title   = {{nhisml: A survey-aware machine learning toolkit for NHIS Adults data}},
+  author  = {Lugu Reign, Nicholas and Lamoreaux, Catherine and Simson, Jan and Kern, Christoph and Kreuter, Frauke},
+  year    = {2026},
+  version = {0.5.1},
+  url     = {https://github.com/LuguReign/nhis-ml-benchmark}
+}
+```
 
 ## License
 
