@@ -128,19 +128,19 @@ The current release ships two pre-defined tasks, specified in Table 1. The
 feature set summary is given in Table 2.
 
 
-  Task ID             Source Variable          Positive Class                             Negative Class                               Problem Type  Eligibility
-  ------------------- ------------------------ ------------------------------------------ ------------------------------------------- -------------- ----------------------
-  Self-rated Health   `PHSTAT_A`               Fair, Poor (codes 4--5)                    Excellent / Very Good / Good (codes 1--3)       Binary     Codes 1--5 only
-  Smoking Current     `SMKCIGST_A` (primary)   Every-day / Some-day smoker (codes 1--2)   Former / Never smoker (codes 3--4)              Binary     Codes 1--4 (primary)
+  Task ID             Source Variable          Positive Class                             Negative Class                                 Eligibility
+  ------------------- ------------------------ ------------------------------------------ ------------------------------------------- ----------------------
+  Self-rated Health   `PHSTAT_A`               Fair/Poor (4--5)                           Excellent/Very Good/Good (1--3)             Codes 1--5 only
+  Smoking Current     `SMKCIGST_A` (primary)   Every-day/Some-day (1--2)                  Former/Never (3--4)                         Codes 1--4 (primary)
 
   : Table 1. Pre-defined Benchmark Tasks
 
 
-  Class                   $k$   Domains                                                                                                                                                             Transformations
-  ----------------------- ----- ------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------
-  Binary                  43    Employment, disability, mental health medication, chronic conditions (hypertension, diabetes, CVD, asthma, arthritis, COPD, cancer), insurance, healthcare access   NHIS 1/2 recode; mode imputation
-  Ordinal                 20    Income-to-poverty ratio, educational attainment, food security, Kessler K6 psychological distress items, healthcare utilization recency                             Median imputation; missingness flag
-  Categorical (nominal)   6     Marital status, urban-rural classification, US Census region, employment status                                                                                     Rare-level bucketing ($<50$ obs); mode imputation; one-hot encoding; missingness flag
+  Class                    $k$   Domains                                                                                             Transformations
+  ------------------------ ----- ---------------------------------------------------------------------------------------- --------------------------------------------------
+  Binary                   43    Employment, disability, medication use, chronic conditions, insurance, healthcare access            NHIS 1/2 recode; mode imputation
+  Ordinal                  20    Income-to-poverty ratio, education, food security, psychological distress, healthcare utilization   Median imputation
+  Categorical (nominal)    6     Marital status, urban-rural classification, Census region, employment status                        Rare-level bucketing; mode imputation; one-hot encoding
 
   : Table 2. Feature Sets by Measurement Class
 
