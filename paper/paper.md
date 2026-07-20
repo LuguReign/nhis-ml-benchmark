@@ -127,26 +127,43 @@ label function.
 The current release ships two pre-defined tasks, specified in Table 1. The
 feature set summary is given in Table 2.
 
-\scriptsize
+\footnotesize
 
-  Task ID             Source Variable          Positive Class                             Negative Class                                 Eligibility
-  ------------------- ------------------------ ------------------------------------------ ------------------------------------------- ----------------------
-  Self-rated Health   `PHSTAT_A`               Fair/Poor (4--5)                           Excellent/Very Good/<br>Good (1--3)          Codes 1--5 only
-  Smoking Current     `SMKCIGST_A` (primary)   Every-day/Some-day (1--2)                  Former/Never (3--4)                          Codes 1--4 (primary)
++-------------------+------------------------+------------------------+--------------------------+-----------------+
+| Task ID           | Source Variable        | Positive Class          | Negative Class           | Eligibility     |
++===================+========================+========================+==========================+=================+
+| Self-rated Health | `PHSTAT_A`             | Fair/Poor               | Excellent/Very Good/     | Codes 1--5 only |
+|                   |                        | (4--5)                  | Good (1--3)              |                  |
++-------------------+------------------------+------------------------+--------------------------+-----------------+
+| Smoking Current   | `SMKCIGST_A`           | Every-day/Some-day      | Former/Never             | Codes 1--4       |
+|                   | (primary)              | (1--2)                  | (3--4)                   | (primary)        |
++-------------------+------------------------+------------------------+--------------------------+-----------------+
 
-  : Table 1. Pre-defined Benchmark Tasks
+: Table 1. Pre-defined Benchmark Tasks
 
 \normalsize
 
-\scriptsize
+\footnotesize
 
-  Class                    $k$   Domains                                                                                             Transformations
-  ------------------------ ----- ---------------------------------------------------------------------------------------- --------------------------------------------------
-  Binary                   43    Employment, disability, medication use, chronic<br>conditions,insurance, healthcare access             NHIS 1/2 recode; mode imputation
-  Ordinal                  20    Income-to-poverty ratio, education, food security,<br>psychological distress, healthcare utilization   Median imputation
-  Categorical (nominal)    6     Marital status, urban-rural classification, Census<br>region, employment status                        Rare-level bucketing; mode imputation;<br>one-hot encoding
++----------------------+-----+----------------------------------+----------------------------+
+| Class                | $k$ | Domains                          | Transformations            |
++======================+=====+==================================+============================+
+| Binary               | 43  | Employment, disability,          | NHIS 1/2 recode;           |
+|                      |     | medication use, chronic          | mode imputation            |
+|                      |     | conditions, insurance,           |                            |
+|                      |     | healthcare access                |                            |
++----------------------+-----+----------------------------------+----------------------------+
+| Ordinal              | 20  | Income-to-poverty ratio,         | Median imputation          |
+|                      |     | education, food security,       |                            |
+|                      |     | psychological distress,          |                            |
+|                      |     | healthcare utilization           |                            |
++----------------------+-----+----------------------------------+----------------------------+
+| Categorical (nominal)| 6   | Marital status, urban-rural      | Rare-level bucketing;      |
+|                      |     | classification, Census region,  | mode imputation;            |
+|                      |     | employment status                | one-hot encoding           |
++----------------------+-----+----------------------------------+----------------------------+
 
-  : Table 2. Feature Sets by Measurement Class
+: Table 2. Feature Sets by Measurement Class
 
 \normalsize
 
