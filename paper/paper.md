@@ -105,7 +105,7 @@ evaluation time, preventing any form of data leakage.
 PrepareFrame encodes two categories of transformation. Survey-specific
 operations require no configuration from the user: NHIS non-response 
 codes are mapped to `NaN`, binary yes/no items are one-hot encoded, and 
-rare categorical levels are collapsed into a single ``rare'' category.
+rare categorical levels are collapsed into a single "rare" category.
 At evaluation time, unseen levels are
 automatically routed to this category. Missingness indicator flags are
 generated for all ordinal and categorical columns.
@@ -247,5 +247,5 @@ We are a team of university students from the University of Maryland's
 Joint Program in Survey Methodology (JPSM) and researchers from LMU
 Munich. We are not affiliated with the CDC, NCHS, or the NHIS.
 
-[^1]: `nhisml` is available on PyPi (<https://pypi.org/project/nhisml/>)
+[^1]: `nhisml` is available on PyPI (<https://pypi.org/project/nhisml/>)
     and GitHub (<https://github.com/LuguReign/nhis-ml-benchmark>).
