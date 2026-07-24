@@ -14,7 +14,7 @@ Please open a GitHub issue and include:
 
 ```bash
 git clone https://github.com/LuguReign/nhis-ml-benchmark.git
-cd nhis-ml-benchmark
+cd nhisml
 pip install -e ".[dev]"
 ```
 

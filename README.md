@@ -99,7 +99,7 @@ nhisml describe-task srh_binary
 
 ## Available Feature Sets
 
-The `core` feature set includes 66 NHIS Adults predictors spanning:
+The `core` feature set includes 69 NHIS Adults predictors spanning:
 
 - **Health conditions** (hypertension, diabetes, cardiovascular disease, respiratory, etc.)
 - **Mental health** (depression, anxiety, psychological distress indices)
@@ -185,13 +185,13 @@ Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 
 ## Citation
 
-If you use this software, please cite it as below:
 
 ```bibtex
-@software{nhisml2026,
+@software{nhisml,
+  title   = {{nhisml: A survey-aware machine learning toolkit for NHIS Adults data}},
   author  = {Lugu Reign, Nicholas and Lamoreaux, Catherine and Simson, Jan and Kern, Christoph and Kreuter, Frauke},
-  title   = {nhisml: A Survey-Aware ML Toolkit for the NHIS Adults Dataset},
-  version = {0.5.2},
+  year    = {2026},
+  version = {0.5.1},
   url     = {https://github.com/LuguReign/nhis-ml-benchmark}
 }
 ```

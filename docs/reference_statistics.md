@@ -54,9 +54,9 @@ national population proportion.
 97 (Refused), 98 (Not ascertained), and 99 (Don't know) in AGEP_A. These are
 not actual ages and are excluded from the age-range plausibility check.
 
-**External benchmark:** CDC Health, United States reports approximately
-14–16% of US adults with fair or poor self-rated health during this period,
-consistent with our weighted estimates.
+**External benchmark:** [NHIS Adult Summary Health Statistics](https://wwwn.cdc.gov/NHISDataQueryTool/SHS_adult/index.html) reports 
+15.1% (2023) and 14.8% (2024) of US adults with fair or poor self-rated health,
+matching our weighted estimates.
 
 ---
 
@@ -72,11 +72,9 @@ SMKCIGST_A values outside {1–4} trigger a fallback to SMKNOW_A.
 | Current smoker — unweighted rate | ~11.5% | 10.55% |
 | Current smoker — survey-weighted rate | ~10.5% | 9.94% |
 
-**External benchmark:** CDC's National Center for Health Statistics estimates
-current cigarette smoking prevalence among US adults at approximately 11–12%
-for this period (CDC MMWR, 2023 data). The nhisml weighted estimate of ~10%
-is consistent with this, noting that the NHIS measure excludes e-cigarettes
-and other tobacco products.
+**External benchmark:** [NHIS Adult Summary Health Statistics](https://wwwn.cdc.gov/NHISDataQueryTool/SHS_adult/index.html) reports 
+current cigarette smoking prevalence among US adults at 10.8% (2023) and 9.9% (2024)
+for this period, consistent with our weighted estimates.
 
 ---
 
@@ -137,7 +135,7 @@ Example output for a correct installation:
 ============================================================
   nhisml validate-data — NHIS Adults 2023
   File : data/core_2023.parquet
-  Result: PASS  (12 passed, 0 failed)
+  Result: PASS  (14 passed, 0 failed)
 ============================================================
   ✓ Row count
   ✓ Minimum column count
@@ -146,13 +144,13 @@ Example output for a correct installation:
   ✓ Survey weights: all positive
   ✓ SRH eligible count
   ✓ SRH unweighted prevalence (ref ≈ 15.7%, ±1%)
-  ✓ SRH weighted prevalence (ref ≈ 14.0%, ±1%)
+  ✓ SRH weighted prevalence (ref ≈ 15.1%, ±1%)
   ✓ Smoking eligible count (SMKCIGST_A)
   ✓ Smoking unweighted prevalence (ref ≈ 11.5%, ±1%)
   ✓ Smoking weighted prevalence (ref ≈ 10.5%, ±1%)
   ✓ Sex distribution plausible (49–55% female)
   ✓ All four NCHS regions present
-  ✓ Age range plausible (18–85, top-coded)
+  ✓ Age range plausible (18–85, top-coded, excl. missing codes 97-99)
 ```
 
 ### Using pytest (for developers)

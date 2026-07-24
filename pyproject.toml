@@ -7,10 +7,10 @@ requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [
   { name = "Nicholas Lugu Reign", email = "lreign1@umd.edu" },
-  { name = "Catherine Lamoreaux", email = "clamor@umd.edu" },
-  { name = "Jan Simson", email = "jan.simson@stat.uni-muenchen.de" },
-  { name = "Christoph Kern", email = "christoph.kern@stat.uni-muenchen.de" },
-  { name = "Frauke Kreuter", email = "fkreuter@umd.edu" }
+  { name = "Catherine Lamoreaux" },
+  { name = "Jan Simson" },
+  { name = "Christoph Kern" },
+  { name = "Frauke Kreuter" }
 ]
 dependencies = [
   "numpy>=1.26",
