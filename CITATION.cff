@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "nhisml: A Survey-Aware ML Toolkit for the NHIS Adults Dataset"
+version: 0.5.2
+license: MIT
+url: "https://github.com/LuguReign/nhis-ml-benchmark"
+authors:
+  - given-names: Nicholas
+    family-names: Lugu Reign
+    email: lreign1@umd.edu
+    affiliation: University of Maryland
+  - given-names: Catherine
+    family-names: Lamoreaux
+    email: clamor@umd.edu
+    affiliation: University of Maryland
+  - given-names: Jan
+    family-names: Simson
+    email: jan.simson@stat.uni-muenchen.de
+    affiliation: LMU Munich
+  - given-names: Christoph
+    family-names: Kern
+    email: christoph.kern@stat.uni-muenchen.de
+    affiliation: LMU Munich
+  - given-names: Frauke
+    family-names: Kreuter
+    email: fkreuter@umd.edu
+    affiliation: University of Maryland
